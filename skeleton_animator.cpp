@@ -579,6 +579,17 @@ void SkeletonAnimator::apply_animation(
 				target.basis = Basis(t_rot).scaled(current.basis.get_scale());
 				current = current.interpolate_with(target, p_multiplier);
 			} break;
+			case ANIMATION_APPLY_MODE_OVERRIDE_SCALE: {
+				Transform target = current;
+				target.basis = current.basis.orthonormalized().scaled(t_scale);
+				current = current.interpolate_with(target, p_multiplier);
+			} break;
+
+			case ANIMATION_APPLY_MODE_OVERRIDE_TRANSLATION: {
+				Transform target = current;
+				target.origin = t_pos;
+				current = current.interpolate_with(target, p_multiplier);
+			} break;
 		}
 
 		sk->set_bone_pose(bone_idx, current);
@@ -717,6 +728,8 @@ void SkeletonAnimator::_bind_methods() {
 	BIND_ENUM_CONSTANT(ANIMATION_APPLY_MODE_ADDITIVE);
 	BIND_ENUM_CONSTANT(ANIMATION_APPLY_MODE_OVERRIDE);
 	BIND_ENUM_CONSTANT(ANIMATION_APPLY_MODE_OVERRIDE_ROTATION);
+	BIND_ENUM_CONSTANT(ANIMATION_APPLY_MODE_OVERRIDE_SCALE);
+	BIND_ENUM_CONSTANT(ANIMATION_APPLY_MODE_OVERRIDE_TRANSLATION);
 
 	// Signals (with named parameters for GDScript autocomplete)
 	ADD_SIGNAL(MethodInfo("animation_change",
